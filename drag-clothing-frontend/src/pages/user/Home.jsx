@@ -247,7 +247,14 @@ const Home = () => {
             className="absolute inset-0 z-0"
           >
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#EBE9E0]" />
-            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2670&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Hero" />
+            <video
+              src="/Untitled design.mp4"
+              className="w-full h-full object-cover opacity-80"
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
           </motion.div>
           <div className="relative z-10 w-full max-w-[1600px] mx-auto">
             <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 1 }}>

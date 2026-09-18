@@ -47,7 +47,7 @@ const teamMembers = [
       github: "https://github.com/sagarrsinghh",
       linkedin: "https://www.linkedin.com/in/sagarrsingh/",
       instagram: "https://www.instagram.com/sagarrsingh10/",
-      mail: "mailto:sagarrsinghh11@gmail.com"
+      mail: "mailto:sgrrsingh11@gmail.com"
     }
   },
   {
@@ -66,7 +66,24 @@ const teamMembers = [
       instagram: "https://www.instagram.com/jhalachandrabhansingh.03/",
       mail: "mailto:chandrabhansinghjhala03@gmail.com"
     }
-  }
+  },
+
+  {
+    id: 4, 
+    name: "Chandrabhan Singh Chouhan",
+    role: "Full-Stack Chameleon",
+    shortDesc: "The bridge between 'looks good' and 'actually works'.",
+    bio: "The Swiss Army knife of the team. One minute he's debugging a complex middleware flow, the next he's tweaking a React hook. He speaks both 'Client' and 'Server' fluently, making sure the two sides don't start a war with each other.",
+    tags: ["Full Stack", "API Ninja", "Node.js"],
+    image: "WhatsApp Image 2026-02-18 at 5.25.30 PM.jpeg",
+    icon: <Layers className="w-5 h-5" />,
+    audio: "/MFgabru.mp3",
+    socials: {
+      github: "https://github.com/Chandrabhan-max",
+      linkedin: "https://www.linkedin.com/in/chandrabhan03/",
+      mail: "mailto:cschouhan299@gmail.com"
+    }
+  },
 
 ];
 
@@ -136,7 +153,7 @@ const TeamImmersive = () => {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[600px] md:h-[500px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {teamMembers.map((member, index) => (
             <ImageCard
               key={member.id}
@@ -269,28 +286,28 @@ const ImageCard = ({ member, index, onClick }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
       onClick={onClick}
-      className="group relative w-full h-full overflow-hidden cursor-pointer rounded-sm"
+      className="group relative w-full overflow-hidden cursor-pointer rounded-lg h-72 sm:h-80 md:h-96"
     >
       <img
         src={member.image}
         alt={member.name}
         className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out grayscale group-hover:grayscale-0 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500" />
       <div className="absolute top-4 left-4 z-10">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-2 rounded-full text-white">
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-2.5 rounded-full text-white">
           {member.icon}
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full p-6 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-        <h3 className="text-2xl font-medium text-white mb-1">
+      <div className="absolute bottom-0 left-0 w-full p-8 z-10 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+        <h3 className="text-3xl font-semibold text-white mb-1 leading-tight">
           {member.name}
         </h3>
         <div className="overflow-hidden">
-          <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-2">
+          <p className="text-sm font-bold uppercase tracking-widest text-white/80 mb-2">
             {member.role}
           </p>
-          <p className="text-sm text-white/60 line-clamp-2 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto transition-all duration-500 delay-100">
+          <p className="text-sm text-white/70 line-clamp-2 opacity-0 h-0 group-hover:opacity-100 group-hover:h-auto transition-all duration-500 delay-100">
             {member.shortDesc}
           </p>
         </div>

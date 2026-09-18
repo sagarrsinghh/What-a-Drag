@@ -39,7 +39,20 @@ const teamContacts = [
       linkedin: "https://www.linkedin.com/in/sagarrsingh/",
       instagram: "https://www.instagram.com/sagarrsingh10/"
     }
-  }
+  },
+  {
+  id: 4,
+    name: "Chandrabhan Singh Chouhan",
+    role: "Full-Stack Chameleon",
+    email: "cschouhan299@gmail.com",
+    phone: "+91 8209859078",
+    socials: {
+      github: "https://github.com/Chandrabhan-max",
+      linkedin: "https://www.linkedin.com/in/chandrabhan03/",
+      instagram: "https://www.instagram.com/chandrabhan03/"
+    }
+    }
+  
 ];
 
 const Contact = () => {
