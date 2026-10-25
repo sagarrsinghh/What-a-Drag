@@ -353,7 +353,11 @@ const ClientProducts = () => {
                   <div>
                     <label htmlFor="productCategory" className="text-[9px] font-black text-gray-400 uppercase ml-2">Category</label>
                     <select id="productCategory" required value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})} className="w-full bg-[#FAFAFA] rounded-2xl p-4 text-[11px] font-bold outline-none appearance-none mt-1">
-                      <option value="" disabled>SELECT CATEGORY</option>
+                      {categories.length === 0 ? (
+                        <option value="" disabled>NO CATEGORIES AVAILABLE (ADD IN SUPERADMIN)</option>
+                      ) : (
+                        <option value="" disabled>SELECT CATEGORY</option>
+                      )}
                       {categories.map(cat => <option key={cat.id || cat.categoryId} value={cat.id || cat.categoryId}>{cat.name || cat.categoryName}</option>)}
                     </select>
                   </div>
