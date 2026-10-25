@@ -15,13 +15,23 @@ export class ProductsService {
     private readonly auditService: AuditService,
   ) {}
 
+  private async resolveClientId(user: any, manager?: any): Promise<string> {
+    if (user?.clientId) return user.clientId;
+    const mgr = manager || this.dataSource.manager;
+    const firstClient = await mgr.findOne(Entity.Client, {
+      where: { isActive: true },
+    });
+    return firstClient?.id || null;
+  }
+
   async createProduct(_user: any, dto: CreateProductDto) {
-    const clientId = _user.clientId;
     const createdBy = _user.id;
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    const clientId = await this.resolveClientId(_user, queryRunner.manager);
 
     try {
       const category = await queryRunner.manager
@@ -107,12 +117,12 @@ export class ProductsService {
   }
 
   async getProducts(_user: any) {
-    const clientId = _user.clientId;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
     try {
-      const products = await queryRunner.manager
+      const clientId = await this.resolveClientId(_user, queryRunner.manager);
+      const query = queryRunner.manager
         .createQueryBuilder(Entity.Product, 'product')
         .select([
           'product.id AS productId',
@@ -124,8 +134,13 @@ export class ProductsService {
           'product.categoryId AS categoryId',
           'product.type AS type',
           'product.gender AS gender',
-        ])
-        .where('product.clientId = :clientId', { clientId })
+        ]);
+
+      if (clientId) {
+        query.where('product.clientId = :clientId', { clientId });
+      }
+
+      const products = await query
         .orderBy('product.createdAt', 'DESC')
         .getRawMany();
 
@@ -186,16 +201,20 @@ export class ProductsService {
   }
 
   async getProduct(_user: any, productId: string) {
-    const clientId = _user.clientId;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
     try {
-      const product = await queryRunner.manager
+      const clientId = await this.resolveClientId(_user, queryRunner.manager);
+      const query = queryRunner.manager
         .createQueryBuilder(Entity.Product, 'product')
-        .where('product.id = :productId', { productId })
-        .andWhere('product.clientId = :clientId', { clientId })
-        .getOne();
+        .where('product.id = :productId', { productId });
+
+      if (clientId) {
+        query.andWhere('product.clientId = :clientId', { clientId });
+      }
+
+      const product = await query.getOne();
 
       if (!product) {
         throw {
@@ -233,17 +252,21 @@ export class ProductsService {
   }
 
   async updateProduct(_user: any, productId: string, dto: any) {
-    const clientId = _user.clientId;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const existing = await queryRunner.manager
+      const clientId = await this.resolveClientId(_user, queryRunner.manager);
+      const query = queryRunner.manager
         .createQueryBuilder(Entity.Product, 'product')
-        .where('product.id = :productId', { productId })
-        .andWhere('product.clientId = :clientId', { clientId })
-        .getOne();
+        .where('product.id = :productId', { productId });
+
+      if (clientId) {
+        query.andWhere('product.clientId = :clientId', { clientId });
+      }
+
+      const existing = await query.getOne();
 
       if (!existing) {
         throw {
@@ -327,19 +350,22 @@ export class ProductsService {
   }
 
   async deleteProduct(_user: any, productId: string) {
-    const clientId = _user.clientId;
-
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const existing = await queryRunner.manager
+      const clientId = await this.resolveClientId(_user, queryRunner.manager);
+      const query = queryRunner.manager
         .createQueryBuilder(Entity.Product, 'product')
-        .where('product.id = :productId', { productId })
-        .andWhere('product.clientId = :clientId', { clientId })
-        .getOne();
+        .where('product.id = :productId', { productId });
+
+      if (clientId) {
+        query.andWhere('product.clientId = :clientId', { clientId });
+      }
+
+      const existing = await query.getOne();
 
       if (!existing) {
         throw {
@@ -352,7 +378,6 @@ export class ProductsService {
       // ✅ Permanent delete
       await queryRunner.manager.delete(Entity.Product, {
         id: productId,
-        clientId: clientId,
       });
 
       // ✅ Audit log
@@ -411,18 +436,21 @@ export class ProductsService {
     productId: string,
     isActive: boolean,
   ) {
-    const clientId = _user.clientId;
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const existing = await queryRunner.manager
+      const clientId = await this.resolveClientId(_user, queryRunner.manager);
+      const query = queryRunner.manager
         .createQueryBuilder(Entity.Product, 'product')
-        .where('product.id = :productId', { productId })
-        .andWhere('product.clientId = :clientId', { clientId })
-        .getOne();
+        .where('product.id = :productId', { productId });
+
+      if (clientId) {
+        query.andWhere('product.clientId = :clientId', { clientId });
+      }
+
+      const existing = await query.getOne();
 
       if (!existing) {
         throw {
@@ -437,7 +465,6 @@ export class ProductsService {
         .update(Entity.Product)
         .set({ isActive })
         .where('id = :productId', { productId })
-        .andWhere('clientId = :clientId', { clientId })
         .execute();
 
       await this.auditService.createAuditLogWithQueryRunner(

@@ -28,42 +28,42 @@ export class ProductsController {
 
   @Post()
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   async createProduct(@Req() req, @Body() dto: CreateProductDto) {
     return this.productsService.createProduct(req.user, dto);
   }
 
   @Get()
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   async getProducts(@Req() req) {
     return this.productsService.getProducts(req.user);
   }
 
   @Get(':id')
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   async getProduct(@Req() req, @Param('id') id: string) {
     return this.productsService.getProduct(req.user, id);
   }
 
   @Put(':id')
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   async updateProduct(@Req() req, @Param('id') id: string, @Body() dto: any) {
     return this.productsService.updateProduct(req.user, id, dto);
   }
 
   @Delete(':id')
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   async deleteProduct(@Req() req, @Param('id') id: string) {
     return this.productsService.deleteProduct(req.user, id);
   }
 
   @Patch(':id/live')
   @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   async setLive(
     @Req() req,
     @Param('id') id: string,
