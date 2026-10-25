@@ -4,13 +4,33 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Package, X, Loader2, Power, PowerOff, AlertTriangle, RefreshCcw, Edit2, Tag, Users as UsersIcon, Trash2, Layers, Image as ImageIcon, Link as LinkIcon, Archive } from 'lucide-react';
 import api, { getFullImageUrl } from '../../api/axios';
 
+const DEFAULT_PRODUCT_TYPES = [
+  'T_SHIRTS',
+  'POLO_T_SHIRTS',
+  'CASUAL_SHIRTS',
+  'FORMAL_SHIRTS',
+  'HOODIES_SWEATSHIRTS',
+  'JACKETS',
+  'BLAZERS',
+  'JEANS',
+  'TROUSERS',
+  'CHINOS',
+  'CARGO_PANTS',
+  'SHORTS',
+  'TRACK_PANTS',
+  'JOGGERS',
+  'SWEATERS',
+  'VESTS',
+  'LOUNGEWEAR',
+];
+
 const ClientProducts = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('live'); 
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]); 
-  const [productTypes, setProductTypes] = useState([]); 
+  const [productTypes, setProductTypes] = useState(DEFAULT_PRODUCT_TYPES); 
   
   // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,8 +82,19 @@ const ClientProducts = () => {
   const fetchProductTypes = async () => {
     try { 
       const res = await api.get('/client/products/types'); 
-      setProductTypes(res.data?.data || res.data || []); 
-    } catch (error) { console.error('Fetch types failed:', error); }
+      const rawTypes = res.data?.data || res.data || [];
+      const normalized = rawTypes.map((t) =>
+        typeof t === 'object' && t !== null ? t.value || t.type : t,
+      );
+      if (Array.isArray(normalized) && normalized.length > 0) {
+        setProductTypes(normalized);
+      } else {
+        setProductTypes(DEFAULT_PRODUCT_TYPES);
+      }
+    } catch (error) {
+      console.warn('Fetch types failed, using standard product types fallback');
+      setProductTypes(DEFAULT_PRODUCT_TYPES);
+    }
   };
 
   const getTargetId = (p) => p?.productId || p?.id;
@@ -228,7 +259,11 @@ const ClientProducts = () => {
     return viewMode === 'live' ? isActive : !isActive;
   }).filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const formatType = (typeStr) => typeStr ? typeStr.replace(/_/g, ' ') : '';
+  const formatType = (typeStr) => {
+    if (!typeStr) return '';
+    if (typeof typeStr === 'object') return typeStr.label || typeStr.value || '';
+    return String(typeStr).replace(/_/g, ' ');
+  };
 
   const getImageUrl = (url) => {
     return getFullImageUrl(url);
@@ -365,7 +400,11 @@ const ClientProducts = () => {
                     <label htmlFor="productType" className="text-[9px] font-black text-gray-400 uppercase ml-2">Product Type</label>
                     <select id="productType" required value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full bg-[#FAFAFA] rounded-2xl p-4 text-[11px] font-bold outline-none appearance-none mt-1">
                       <option value="" disabled>SELECT TYPE</option>
-                      {productTypes.map(type => <option key={type} value={type}>{formatType(type)}</option>)}
+                      {productTypes.map((type, idx) => {
+                        const val = typeof type === 'object' && type !== null ? type.value : type;
+                        const label = typeof type === 'object' && type !== null ? type.label : formatType(type);
+                        return <option key={val || idx} value={val}>{label}</option>;
+                      })}
                     </select>
                   </div>
                   <div>
