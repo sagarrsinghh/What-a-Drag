@@ -1,4 +1,4 @@
-﻿import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Product } from 'src/entities';
 import { ApiResponseService } from 'src/common/api-response.service';
@@ -65,9 +65,16 @@ export class ProductsService {
 
       if (gender) {
         const normalizedGender = this.normalizeGender(gender);
-        qb.andWhere('product.gender = :gender', {
-          gender: normalizedGender,
-        });
+        if (normalizedGender === Gender.MEN || normalizedGender === Gender.WOMEN) {
+          qb.andWhere('(product.gender = :gender OR product.gender = :unisex)', {
+            gender: normalizedGender,
+            unisex: Gender.UNISEX,
+          });
+        } else {
+          qb.andWhere('product.gender = :gender', {
+            gender: normalizedGender,
+          });
+        }
       }
 
       if (category) {
@@ -75,9 +82,34 @@ export class ProductsService {
           .replace(/-/g, ' ')
           .trim()
           .toLowerCase();
-        qb.andWhere('LOWER(category.name) = :category', {
-          category: normalizedCategory,
-        });
+
+        if (normalizedCategory === 'topwear') {
+          qb.andWhere(
+            '(LOWER(category.name) LIKE :t1 OR LOWER(category.name) LIKE :t2 OR LOWER(category.name) LIKE :t3)',
+            { t1: '%t-shirt%', t2: '%shirt%', t3: '%top%' },
+          );
+        } else if (normalizedCategory === 'bottomwear') {
+          qb.andWhere(
+            '(LOWER(category.name) LIKE :b1 OR LOWER(category.name) LIKE :b2 OR LOWER(category.name) LIKE :b3)',
+            { b1: '%jean%', b2: '%trouser%', b3: '%pant%' },
+          );
+        } else if (
+          normalizedCategory === 'winter wear' ||
+          normalizedCategory === 'outerwear'
+        ) {
+          qb.andWhere(
+            '(LOWER(category.name) LIKE :w1 OR LOWER(category.name) LIKE :w2)',
+            { w1: '%jacket%', w2: '%sweatshirt%' },
+          );
+        } else {
+          qb.andWhere(
+            '(LOWER(category.name) = :category OR LOWER(category.name) LIKE :catLike)',
+            {
+              category: normalizedCategory,
+              catLike: `%${normalizedCategory}%`,
+            },
+          );
+        }
       }
 
       if (type) {
@@ -550,14 +582,44 @@ export class ProductsService {
         .trim()
         .toLowerCase();
 
-      const products = await queryRunner.manager
+      const qb = queryRunner.manager
         .createQueryBuilder(Product, 'product')
         .innerJoin(Category, 'category', 'category.id = product.categoryId')
-        .where('product.gender = :gender', { gender: normalizedGender })
-        .andWhere('LOWER(category.name) = :category', {
-          category: normalizedCategory,
+        .where('(product.gender = :gender OR product.gender = :unisex)', {
+          gender: normalizedGender,
+          unisex: Gender.UNISEX,
         })
-        .andWhere('product.isActive = :isActive', { isActive: true })
+        .andWhere('product.isActive = :isActive', { isActive: true });
+
+      if (normalizedCategory === 'topwear') {
+        qb.andWhere(
+          '(LOWER(category.name) LIKE :t1 OR LOWER(category.name) LIKE :t2 OR LOWER(category.name) LIKE :t3)',
+          { t1: '%t-shirt%', t2: '%shirt%', t3: '%top%' },
+        );
+      } else if (normalizedCategory === 'bottomwear') {
+        qb.andWhere(
+          '(LOWER(category.name) LIKE :b1 OR LOWER(category.name) LIKE :b2 OR LOWER(category.name) LIKE :b3)',
+          { b1: '%jean%', b2: '%trouser%', b3: '%pant%' },
+        );
+      } else if (
+        normalizedCategory === 'winter wear' ||
+        normalizedCategory === 'outerwear'
+      ) {
+        qb.andWhere(
+          '(LOWER(category.name) LIKE :w1 OR LOWER(category.name) LIKE :w2)',
+          { w1: '%jacket%', w2: '%sweatshirt%' },
+        );
+      } else {
+        qb.andWhere(
+          '(LOWER(category.name) = :category OR LOWER(category.name) LIKE :catLike)',
+          {
+            category: normalizedCategory,
+            catLike: `%${normalizedCategory}%`,
+          },
+        );
+      }
+
+      const products = await qb
         .orderBy('product.createdAt', 'DESC')
         .getMany();
       const enrichedProducts = await this.attachImagesToProducts(
@@ -606,15 +668,46 @@ export class ProductsService {
         .replace(/-/g, ' ')
         .trim()
         .toLowerCase();
-      const products = await queryRunner.manager
+
+      const qb = queryRunner.manager
         .createQueryBuilder(Product, 'product')
         .innerJoin(Category, 'category', 'category.id = product.categoryId')
-        .where('product.gender = :gender', { gender: normalizedGender })
-        .andWhere('LOWER(category.name) = :category', {
-          category: normalizedCategory,
+        .where('(product.gender = :gender OR product.gender = :unisex)', {
+          gender: normalizedGender,
+          unisex: Gender.UNISEX,
         })
         .andWhere('product.type = :type', { type })
-        .andWhere('product.isActive = :isActive', { isActive: true })
+        .andWhere('product.isActive = :isActive', { isActive: true });
+
+      if (normalizedCategory === 'topwear') {
+        qb.andWhere(
+          '(LOWER(category.name) LIKE :t1 OR LOWER(category.name) LIKE :t2 OR LOWER(category.name) LIKE :t3)',
+          { t1: '%t-shirt%', t2: '%shirt%', t3: '%top%' },
+        );
+      } else if (normalizedCategory === 'bottomwear') {
+        qb.andWhere(
+          '(LOWER(category.name) LIKE :b1 OR LOWER(category.name) LIKE :b2 OR LOWER(category.name) LIKE :b3)',
+          { b1: '%jean%', b2: '%trouser%', b3: '%pant%' },
+        );
+      } else if (
+        normalizedCategory === 'winter wear' ||
+        normalizedCategory === 'outerwear'
+      ) {
+        qb.andWhere(
+          '(LOWER(category.name) LIKE :w1 OR LOWER(category.name) LIKE :w2)',
+          { w1: '%jacket%', w2: '%sweatshirt%' },
+        );
+      } else {
+        qb.andWhere(
+          '(LOWER(category.name) = :category OR LOWER(category.name) LIKE :catLike)',
+          {
+            category: normalizedCategory,
+            catLike: `%${normalizedCategory}%`,
+          },
+        );
+      }
+
+      const products = await qb
         .orderBy('product.createdAt', 'DESC')
         .getMany();
       const enrichedProducts = await this.attachImagesToProducts(

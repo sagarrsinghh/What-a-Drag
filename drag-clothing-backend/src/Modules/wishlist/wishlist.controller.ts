@@ -15,8 +15,7 @@ import { Role } from 'src/common/enums/role.enum';
 import { RolesGuard } from '../Auth/guards/roles.guard';
 
 @Controller('wishlist')
-@UseGuards(JwtGuard, RolesGuard)
-@Roles(Role.CUSTOMER)
+@UseGuards(JwtGuard)
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 

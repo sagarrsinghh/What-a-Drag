@@ -136,6 +136,15 @@ const Category = () => {
           <h1 className="text-6xl md:text-[6rem] font-black uppercase tracking-tighter text-[#111] leading-[0.85]">
             {genderParam}'s <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#111] to-[#999]">Directory.</span>
           </h1>
+          <div className="mt-8 flex items-center gap-4">
+            <button
+              onClick={() => navigate(`/products?gender=${genderParam.toUpperCase()}`)}
+              className="px-7 py-3.5 bg-[#1A1A1A] text-white hover:bg-[#9B4819] text-xs font-black uppercase tracking-[0.25em] rounded-full transition-all flex items-center gap-2 shadow-md hover:scale-105"
+            >
+              <span>Explore All {genderParam} Apparel</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
         </motion.div>
 
         {/* BENTO GRID */}

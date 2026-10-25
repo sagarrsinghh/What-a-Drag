@@ -11,50 +11,50 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  @Roles(Role.CUSTOMER)
+  @Roles(Role.CUSTOMER, Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   createOrder(@Req() req: any) {
     return this.ordersService.createOrder(req.user);
   }
 
   @Get()
-  @Roles(Role.CUSTOMER)
+  @Roles(Role.CUSTOMER, Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   getOrders(@Req() req: any) {
     return this.ordersService.getOrders(req.user.id);
   }
 
   @Get('client/my-orders')
-  @Roles(Role.CLIENT)
+  @Roles(Role.CLIENT, Role.SUPER_ADMIN)
   getClientOrders(@Req() req: any) {
     // 👇 Change req.user.id to req.user.clientId
     return this.ordersService.getClientOrders(req.user.clientId); 
   }
 
   @Get('manager/my-orders')
-  @Roles(Role.MANAGER)
+  @Roles(Role.MANAGER, Role.SUPER_ADMIN)
   getManagerOrders(@Req() req: any) {
     return this.ordersService.getManagerOrders(req.user.id, req.user.clientId);
   }
 
   @Post('preview')
-  @Roles(Role.CUSTOMER)
+  @Roles(Role.CUSTOMER, Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   previewOrder(@Req() req: any, @Body() body: { couponCode?: string }) {
     return this.ordersService.previewOrder(req.user.id, body.couponCode);
   }
 
   @Put(':id/cancel')
-  @Roles(Role.CUSTOMER)
+  @Roles(Role.CUSTOMER, Role.CLIENT, Role.SUPER_ADMIN, Role.MANAGER)
   cancelOrder(@Req() req: any, @Param('id') id: string) {
     return this.ordersService.cancelOrder(req.user, id);
   }
 
   @Put(':id/status')
-  @Roles(Role.MANAGER, Role.CLIENT)
+  @Roles(Role.MANAGER, Role.CLIENT, Role.SUPER_ADMIN)
   updateStatus(@Req() req: any,@Param('id') id: string,@Body('status') status: string,@Body('trackingNumber') trackingNumber?: string,@Body('courierName') courierName?: string,){
     return this.ordersService.updateOrderStatus(req.user,id,status,trackingNumber,courierName,);
   }
 
   @Get(':id')
-  @Roles(Role.CUSTOMER, Role.MANAGER, Role.CLIENT)
+  @Roles(Role.CUSTOMER, Role.MANAGER, Role.CLIENT, Role.SUPER_ADMIN)
   getOrderById(@Param('id') id: string) {
     return this.ordersService.getOrderById(id);
   }

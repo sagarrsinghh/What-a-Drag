@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Package, MapPin, LogOut,ArrowLeft,
   Plus, Edit2, Trash2, ChevronRight,
-  Shield, Phone, Save, X, Loader2, AlertCircle, Camera, User
+  Shield, Phone, Save, X, Loader2, AlertCircle, Camera, User, Truck, CheckCircle, Clock
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate , useLocation} from 'react-router-dom';
@@ -312,103 +312,236 @@ const AddressTab = () => {
 const OrdersTab = () => {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        // Aapke NestJS OrdersController mein @Get() endpoint '/orders' hai
-        const res = await api.get('/orders');
-        
-        // NestJS se data usually nested form mein aata hai based on your ApiResponseService
-        // Your backend returns: { total: orders.length, data: orders }
-        let fetchedOrders = [];
-        
-        // Safely extracting the array depending on how Axios and your Interceptor handles it
-        if (res.data?.data?.data && Array.isArray(res.data.data.data)) {
-            fetchedOrders = res.data.data.data;
-        } else if (res.data?.data && Array.isArray(res.data.data)) {
-            fetchedOrders = res.data.data;
-        } else if (Array.isArray(res.data)) {
-            fetchedOrders = res.data;
-        }
-
-        setOrders(fetchedOrders);
-      } catch (err) {
-        console.error("Failed to fetch orders:", err);
-        setOrders([]);
-      } finally { 
-        setLoading(false); 
-      }
-    };
-    
     fetchOrders();
   }, []);
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/orders');
+      let fetchedOrders = [];
+      if (res.data?.data?.data && Array.isArray(res.data.data.data)) {
+        fetchedOrders = res.data.data.data;
+      } else if (res.data?.data && Array.isArray(res.data.data)) {
+        fetchedOrders = res.data.data;
+      } else if (Array.isArray(res.data)) {
+        fetchedOrders = res.data;
+      }
+      setOrders(fetchedOrders);
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+      setOrders([]);
+    } finally { 
+      setLoading(false); 
+    }
+  };
+
+  const handleOpenTracking = async (order) => {
+    setSelectedOrder(order);
+    try {
+      const res = await api.get('/orders/' + order.id);
+      const fullOrder = res.data?.data || res.data || order;
+      setSelectedOrder(fullOrder);
+    } catch (err) {
+      console.warn('Could not fetch full order details:', err);
+    }
+  };
+
   const getStatusColor = (status) => {
     const s = (status || '').toUpperCase();
-    if (s === 'DELIVERED' || s === 'COMPLETED') return 'bg-green-100 text-green-800';
-    if (s === 'CANCELLED' || s === 'FAILED') return 'bg-red-100 text-red-800';
-    if (s === 'PROCESSING' || s === 'IN_TRANSIT' || s === 'SHIPPED') return 'bg-blue-100 text-blue-800';
-    return 'bg-yellow-100 text-yellow-800'; // For pending, etc.
+    if (s === 'DELIVERED' || s === 'COMPLETED') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+    if (s === 'CANCELLED' || s === 'FAILED') return 'bg-red-100 text-red-800 border-red-200';
+    if (s === 'PROCESSING' || s === 'IN_TRANSIT' || s === 'SHIPPED' || s === 'CONFIRMED') return 'bg-blue-100 text-blue-800 border-blue-200';
+    return 'bg-amber-100 text-amber-800 border-amber-200';
+  };
+
+  const getTrackingSteps = (status) => {
+    const s = (status || '').toLowerCase();
+    const steps = [
+      { key: 'placed', label: 'Order Placed', desc: 'Order received & verified' },
+      { key: 'confirmed', label: 'Confirmed & Packed', desc: 'Prepared for dispatch' },
+      { key: 'shipped', label: 'Shipped / In Transit', desc: 'Handed to courier partner' },
+      { key: 'delivered', label: 'Delivered', desc: 'Package delivered safely' },
+    ];
+
+    let activeIndex = 0;
+    if (s === 'confirmed' || s === 'processing') activeIndex = 1;
+    else if (s === 'shipped' || s === 'in_transit' || s === 'out_for_delivery') activeIndex = 2;
+    else if (s === 'delivered') activeIndex = 3;
+    else if (s === 'cancelled') activeIndex = -1;
+
+    return { steps, activeIndex };
   };
 
   return (
     <div>
-      <div className="mb-8 border-b border-gray-100 pb-6">
-        <h3 className="text-2xl font-bold text-gray-900">Order History</h3>
-        <p className="text-sm text-gray-500 mt-1">Track your recent orders.</p>
+      <div className="mb-8 border-b border-gray-100 pb-6 flex items-center justify-between">
+        <div>
+          <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Order History</h3>
+          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
+            Click on any order to track live delivery status.
+          </p>
+        </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-gray-300 w-8 h-8" />
+          <Loader2 className="animate-spin text-[#9B4819] w-8 h-8" />
         </div>
       ) : orders.length === 0 ? (
         <div className="py-16 text-center">
-          <Package size={32} className="mx-auto text-gray-200 mb-4" />
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No orders yet</p>
-          <p className="text-xs text-gray-400 mt-2">Your order history will appear here.</p>
+          <Package size={36} className="mx-auto text-gray-300 mb-4" />
+          <p className="text-sm font-black text-gray-500 uppercase tracking-widest">No orders yet</p>
+          <p className="text-xs text-gray-400 mt-2">When you place an order, live tracking will appear here.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="flex items-center gap-5 p-4 rounded-2xl border border-gray-100 hover:border-gray-300 transition-all cursor-pointer group bg-white shadow-sm hover:shadow-md">
-              
-              {/* Product Image Placeholder */}
-              <div className="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden shrink-0 flex items-center justify-center border border-gray-100">
-                {order.items?.[0]?.product?.imageUrl ? (
-                  <img src={order.items[0].product.imageUrl} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="Product" />
-                ) : ( 
-                  <Package size={20} className="text-gray-400 group-hover:text-black transition-colors" /> 
-                )}
-              </div>
-              
-              {/* Order Details */}
-              <div className="flex-1">
-                <div className="flex justify-between items-center mb-1">
-                  {/* NestJS UUID is usually long, so we slice it for display */}
-                  <span className="text-sm font-bold text-gray-900">
-                    Order #{order.id?.slice(0, 8).toUpperCase() || 'ORDER'}
-                  </span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${getStatusColor(order.status)}`}>
-                    {order.status || 'Pending'}
-                  </span>
+            <div
+              key={order.id}
+              onClick={() => handleOpenTracking(order)}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border border-gray-200 hover:border-black transition-all cursor-pointer group bg-white shadow-sm hover:shadow-md"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-gray-100 group-hover:bg-[#9B4819]/10 transition-colors">
+                  <Package size={22} className="text-gray-400 group-hover:text-[#9B4819] transition-colors" />
                 </div>
-                
-                <div className="flex justify-between items-center text-xs text-gray-500 mt-2">
-                  <span className="flex items-center gap-1">
-                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown Date'}
-                  </span>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-black text-gray-900 tracking-wide">
+                      #{order.id?.slice(0, 8).toUpperCase() || 'ORDER'}
+                    </span>
+                    <span className={'text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ' + getStatusColor(order.status)}>
+                      {order.status || 'Pending'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400 font-bold">
+                    Placed on: {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
+                <div className="text-left sm:text-right">
+                  <span className="text-[10px] font-black uppercase text-gray-400 block tracking-widest">Total</span>
                   <span className="font-black text-gray-900 text-sm">₹{order.totalAmount || order.total || 0}</span>
                 </div>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-[#1A1A1A] group-hover:bg-[#9B4819] text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center gap-1.5 shadow"
+                >
+                  <Truck size={12} />
+                  <span>Track Delivery</span>
+                </button>
               </div>
-              
-              <ChevronRight size={18} className="text-gray-300 group-hover:text-[#9B4819] transition-colors" />
             </div>
           ))}
         </div>
       )}
+
+      {/* TRACKING MODAL */}
+      <AnimatePresence>
+        {selectedOrder && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl border border-gray-100 max-h-[90vh] flex flex-col"
+            >
+              <div className="p-6 bg-[#1A1A1A] text-white flex justify-between items-center relative">
+                <div>
+                  <span className="text-[10px] font-bold text-[#9B4819] uppercase tracking-[0.25em]">Live Delivery Tracking</span>
+                  <h4 className="text-xl font-black uppercase tracking-tight">Order #{selectedOrder.id?.slice(0, 8).toUpperCase()}</h4>
+                </div>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="p-6 overflow-y-auto space-y-6">
+                <div className="p-4 rounded-2xl bg-[#FAFAFA] border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block">Courier Partner</span>
+                    <span className="text-sm font-black text-gray-900 flex items-center gap-1.5 mt-0.5">
+                      <Truck size={15} className="text-[#9B4819]" />
+                      {selectedOrder.courierName || 'DRAG Express Logistics'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block">AWB / Tracking Number</span>
+                    <span className="text-xs font-mono font-bold bg-white px-3 py-1 rounded-lg border border-gray-200 block mt-0.5 text-gray-800">
+                      {selectedOrder.trackingNumber || ('DRG-IN-' + selectedOrder.id.slice(0, 8).toUpperCase())}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="py-2">
+                  <h5 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6">Delivery Timeline</h5>
+                  {(() => {
+                    const { steps, activeIndex } = getTrackingSteps(selectedOrder.status);
+                    return (
+                      <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
+                        {steps.map((st, idx) => {
+                          const isDone = activeIndex >= idx && activeIndex !== -1;
+                          const isCurrent = activeIndex === idx;
+                          return (
+                            <div key={st.key} className="relative flex items-start gap-4">
+                              <span
+                                className={'absolute -left-6 top-0.5 w-4 h-4 rounded-full border-2 transition-all ' +
+                                  (isDone ? 'bg-[#1A1A1A] border-[#1A1A1A]' : 'bg-white border-gray-300') +
+                                  (isCurrent ? ' ring-4 ring-[#9B4819]/20' : '')}
+                              />
+                              <div>
+                                <p className={'text-xs font-black uppercase tracking-wide ' + (isDone ? 'text-gray-900' : 'text-gray-400')}>
+                                  {st.label}
+                                </p>
+                                <p className="text-[11px] text-gray-500">{st.desc}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                <div className="border-t border-gray-100 pt-4">
+                  <h5 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Order Details</h5>
+                  <div className="flex justify-between items-center text-xs py-1">
+                    <span className="text-gray-500 font-bold">Total Amount</span>
+                    <span className="font-black text-gray-900 text-sm">₹{selectedOrder.totalAmount || selectedOrder.total || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs py-1">
+                    <span className="text-gray-500 font-bold">Payment Method</span>
+                    <span className="font-bold text-gray-800 uppercase">Cash on Delivery / Online</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="px-6 py-2.5 bg-[#1A1A1A] hover:bg-[#9B4819] text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

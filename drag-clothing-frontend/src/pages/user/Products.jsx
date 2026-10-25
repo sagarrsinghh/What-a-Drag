@@ -44,6 +44,8 @@ const Products = () => {
         if (searchQuery) params.search = searchQuery;
         if (genderQuery) params.gender = genderQuery.toUpperCase();
         if (typeQuery) params.type = typeQuery;
+        if (selectedCategories.length > 0) params.category = selectedCategories[0];
+        else if (initialCategory) params.category = initialCategory;
         if (selectedColors.length > 0) params.color = selectedColors.join(',');
 
         const res = await productService.getProducts(params);
@@ -58,7 +60,7 @@ const Products = () => {
       }
     };
     fetchProducts();
-  }, [searchQuery, genderQuery, typeQuery, selectedColors]);
+  }, [searchQuery, genderQuery, typeQuery, selectedColors, selectedCategories, initialCategory]);
 
   useEffect(() => {
     setSelectedCategories(initialCategory ? [initialCategory] : []);
