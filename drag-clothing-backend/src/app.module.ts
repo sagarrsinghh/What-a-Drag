@@ -28,15 +28,19 @@ import { PaymentsModule } from './Modules/payments/payments.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: config.get('DB_HOST'),
-        port: config.get<number>('DB_PORT'),
-        username: config.get('DB_USERNAME'),
-        password: config.get('DB_PASSWORD'),
-        database: config.get('DB_NAME'),
-
+        host: config.get<string>('DB_HOST', 'localhost'),
+        port: config.get<number>('DB_PORT', 3306),
+        username:
+          config.get<string>('DB_USERNAME') ||
+          config.get<string>('DB_USER', 'root'),
+        password: config.get<string>('DB_PASSWORD', ''),
+        database: config.get<string>('DB_NAME', 'Drag_Clothing'),
+        ssl:
+          config.get('DB_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : undefined,
         entities: Object.values(Entities),
-
-        synchronize: false,
+        synchronize: config.get('DB_SYNC') === 'true' || false,
       }),
     }),
 

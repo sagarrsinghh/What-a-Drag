@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/common/enums/role.enum';
 import { RegisterDto } from './Dto/register.dto';
+import { SetupSuperAdminDto } from './Dto/setup-superadmin.dto';
 import { ChangePasswordDto } from './Dto/change-password.dto';
 import { LoginDto } from './Dto/login.dto';
 import { MailService } from './mail.service';
@@ -776,6 +777,46 @@ export class AuthService {
 
     return {
       message: 'OTP resent successfully',
+    };
+  }
+
+  async setupSuperAdmin(dto: SetupSuperAdminDto) {
+    const email = this.normalizeEmail(dto.email);
+
+    const existingSuperAdmin = await this.usersRepo.findOne({
+      where: { role: Role.SUPER_ADMIN },
+    });
+    if (existingSuperAdmin) {
+      throw new BadRequestException('A Super Admin already exists in the system');
+    }
+
+    const [existingUser, existingCustomer] = await Promise.all([
+      this.usersRepo.findOne({ where: { email } }),
+      this.customersRepo.findOne({ where: { email } }),
+    ]);
+
+    if (existingUser || existingCustomer) {
+      throw new BadRequestException('Email is already registered');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const superAdmin = this.usersRepo.create({
+      name: dto.name,
+      email,
+      password: hashedPassword,
+      role: Role.SUPER_ADMIN,
+      isActive: true,
+    });
+
+    const saved = await this.usersRepo.save(superAdmin);
+    return {
+      message: 'Super Admin created successfully',
+      data: {
+        id: saved.id,
+        name: saved.name,
+        email: saved.email,
+        role: saved.role,
+      },
     };
   }
 }

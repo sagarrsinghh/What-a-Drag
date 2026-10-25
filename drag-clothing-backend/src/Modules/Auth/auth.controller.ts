@@ -5,10 +5,16 @@ import { RefreshGuard } from './guards/refresh.guard';
 import { LoginDto } from './Dto/login.dto';
 import { ChangePasswordDto } from './Dto/change-password.dto';
 import { RegisterDto } from './Dto/register.dto';
+import { SetupSuperAdminDto } from './Dto/setup-superadmin.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('setup-superadmin')
+  setupSuperAdmin(@Body() dto: SetupSuperAdminDto) {
+    return this.authService.setupSuperAdmin(dto);
+  }
 
   @Post('register')
   register(@Body() dto: RegisterDto) {

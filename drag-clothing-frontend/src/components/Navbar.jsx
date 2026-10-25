@@ -5,6 +5,7 @@ import SidePanel from './SidePanel';
 import { useCart } from '../context/CartContext';
 import { useLikes } from '../context/LikesContext';
 import { useAuth } from '../context/AuthContext';
+import { getFullImageUrl } from '../api/axios';
 
 // --- ICONS ---
 const SearchIcon = ({ className = "w-5 h-5" }) => (
@@ -113,7 +114,7 @@ const Navbar = () => {
     const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&auto=format';
     const toImageUrl = (url) => {
         if (!url) return FALLBACK_IMAGE;
-        return url.startsWith('/') ? `http://localhost:3000${url}` : url;
+        return getFullImageUrl(url);
     };
 
     return (

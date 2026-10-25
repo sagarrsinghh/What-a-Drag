@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Package, X, Loader2, Power, PowerOff, AlertTriangle, RefreshCcw, Edit2, Tag, Users as UsersIcon, Trash2, Layers, Image as ImageIcon, Link as LinkIcon, Archive } from 'lucide-react';
-import api from '../../api/axios';
+import api, { getFullImageUrl } from '../../api/axios';
 
 const ClientProducts = () => {
   const navigate = useNavigate();
@@ -231,8 +231,7 @@ const ClientProducts = () => {
   const formatType = (typeStr) => typeStr ? typeStr.replace(/_/g, ' ') : '';
 
   const getImageUrl = (url) => {
-    if (!url) return '';
-    return url.startsWith('/') ? `http://localhost:3000${url}` : url;
+    return getFullImageUrl(url);
   };
 
   return (

@@ -1,7 +1,20 @@
 import axios from "axios";
 
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:3000"
+).replace(/\/+$/, "");
+
+export const getFullImageUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL}${cleanPath}`;
+};
+
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: API_BASE_URL,
 });
 
 // Attach access token
@@ -28,7 +41,7 @@ api.interceptors.response.use(
 
       try {
         const refreshRes = await axios.post(
-          "http://localhost:3000/auth/refresh-token",
+          `${API_BASE_URL}/auth/refresh-token`,
           {},
           {
             headers: {

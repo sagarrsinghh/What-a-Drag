@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CreditCard, Wallet, Banknote, ShieldCheck, Lock, ArrowRight, Loader2, Check, ShoppingBag, X } from 'lucide-react';
 import Confetti from 'react-confetti';
 import { orderService, paymentService } from '../../api/services';
+import { getFullImageUrl } from '../../api/axios';
 
 // --- SUB-COMPONENT: SUCCESS POPUP ---
 const SuccessModal = ({ onClose, orderId }) => {
@@ -278,7 +279,7 @@ const CheckoutPayment = () => {
     const getItemImage = (item) => {
         const raw = item.product?.imageUrl || item.product?.image || item.imageUrl || item.image || item.product?.images?.[0] || '';
         if (!raw) return FALLBACK_IMAGE;
-        return raw.startsWith('/') ? `http://localhost:3000${raw}` : raw;
+        return getFullImageUrl(raw);
     };
     const getItemSize = (item) => item.variant?.size || item.size || '-';
     const getItemPrice = (item) => item.variant?.price || item.product?.price || item.price || 0;

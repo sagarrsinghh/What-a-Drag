@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 import Footer from '../../components/Footer';
+import api from '../../api/axios';
 
 const GALLERY_IMAGES = [
   { id: '01', title: "Merch", subtitle: "Structured Chaos", url: 'https://i.pinimg.com/1200x/e8/e4/a7/e8e4a76077891a8c514a56e2f1743321.jpg' },
@@ -180,9 +181,8 @@ const Home = () => {
   useEffect(() => {
     const fetchLatest = async () => {
       try {
-        const response = await fetch('http://localhost:3000/products?page=1&limit=4');
-        const data = await response.json();
-        const products = data?.data?.data || data?.data || [];
+        const response = await api.get('/products?page=1&limit=4');
+        const products = response.data?.data?.data || response.data?.data || [];
         setLatestProducts(products);
       } catch (err) {
         console.error("Failed to fetch latest products", err);

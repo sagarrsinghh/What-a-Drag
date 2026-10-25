@@ -121,3 +121,9 @@ drag-clothing-frontend/dist-ssr/
 
 # Miscellaneous
 .DS_Store
+
+# Uploaded media (local)
+uploads/*
+!uploads/.gitkeep
+drag-clothing-backend/uploads/*
+!drag-clothing-backend/uploads/.gitkeep
