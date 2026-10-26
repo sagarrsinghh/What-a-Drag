@@ -262,6 +262,7 @@ const Home = () => {
               <h1 className="text-[14vw] leading-[0.8] font-black uppercase tracking-tighter">
                 BEYOND <br /> <span className="ml-[10vw] italic font-serif font-light text-[#9B4819]">AESTHETIC</span>
               </h1>
+              <p className="text-xs md:text-sm font-black uppercase tracking-[0.35em] text-[#9B4819] mt-3 opacity-90">&quot;WHAT A DRAG&quot;</p>
             </motion.div>
           </div>
         </section>

@@ -128,8 +128,8 @@ const Navbar = () => {
                 <div className="max-w-7xl mx-auto px-6 md:px-8 h-12 flex items-center justify-between relative">
 
                     {/* 1. LEFT: LOGO */}
-                    <Link to="/" onClick={handleLogoClick} className="text-2xl font-black tracking-tighter text-[#1A1A1A] cursor-pointer z-50">
-                        DRAG<span className="text-[#9B4819]">.</span>
+                    <Link to="/" onClick={handleLogoClick} className="flex flex-col cursor-pointer z-50 group">
+                        <span className="text-2xl font-black tracking-tighter text-[#1A1A1A] leading-none">DRAG<span className="text-[#9B4819]">.</span></span><span className="text-[7.5px] font-black uppercase tracking-[0.25em] text-gray-400 group-hover:text-[#9B4819] transition-colors mt-0.5">What a drag</span>
                     </Link>
 
                     {/* 2. CENTER: NAVIGATION & SEARCH INPUT */}

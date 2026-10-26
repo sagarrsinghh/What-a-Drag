@@ -286,6 +286,12 @@ const ProductDetail = () => {
               <ArrowLeft size={14} /> Back
             </button>
 
+            {/* Tagline Badge */}
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[9px] font-black uppercase tracking-[0.25em] bg-[#9B4819]/10 text-[#9B4819] px-2 py-0.5 rounded">
+                &quot;What a drag&quot;
+              </span>
+            </div>
             {/* Category Tag */}
             {product.category && (
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#9B4819] mb-2">

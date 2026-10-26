@@ -41,6 +41,7 @@ const Footer = () => {
         {/* Column 1: Brand */}
         <div className="flex flex-col gap-6">
           <div className="text-2xl font-black italic tracking-tighter">DRAG.</div>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#9B4819]">&quot;What a drag&quot;</p>
           <p className="text-[10px] uppercase tracking-widest opacity-40 leading-relaxed">
             Engineered in Jaipur.<br/>
             Worn in the Void.<br/>
