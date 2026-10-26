@@ -48,23 +48,28 @@ const Footer = () => {
           </p>
         </div>
 
-     
-        {/* Column 3: Company (TEAM SECTION HERE) */}
+        {/* Column 2: Legal & Policies (Razorpay Mandatory) */}
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#9B4819] mb-6">Policies</h4>
+          <ul className="flex flex-col gap-3 text-xs font-medium uppercase tracking-widest opacity-70">
+            <li><Link to="/terms" className="hover:text-white hover:pl-2 transition-all duration-300">Terms of Service</Link></li>
+            <li><Link to="/privacy" className="hover:text-white hover:pl-2 transition-all duration-300">Privacy Policy</Link></li>
+            <li><Link to="/refund-policy" className="hover:text-white hover:pl-2 transition-all duration-300">Refund Policy</Link></li>
+            <li><Link to="/shipping-policy" className="hover:text-white hover:pl-2 transition-all duration-300">Shipping Policy</Link></li>
+          </ul>
+        </div>
+
+        {/* Column 3: Company */}
         <div>
           <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#9B4819] mb-6">Company</h4>
           <ul className="flex flex-col gap-3 text-xs font-medium uppercase tracking-widest opacity-70">
             <li><Link to="/about" className="hover:text-white hover:pl-2 transition-all duration-300">About</Link></li>
-            
-            {/* --- TEAM LINK --- */}
             <li className="flex items-center gap-2">
                <Link to="/team" className="hover:text-white hover:pl-2 transition-all duration-300 flex items-center gap-2">
                  The Team 
                </Link>
             </li>
-            {/* ----------------- */}
-
-          
-            <li><Link to="/contact" className="hover:text-white hover:pl-2 transition-all duration-300">Contact</Link></li>
+            <li><Link to="/contact" className="hover:text-white hover:pl-2 transition-all duration-300">Contact Us</Link></li>
           </ul>
         </div>
 
@@ -72,13 +77,13 @@ const Footer = () => {
         <div>
           <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#9B4819] mb-6">Connect</h4>
           <div className="flex gap-4">
-             <a href="https://www.instagram.com/?hl=en" className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500">
+             <a href="https://www.instagram.com/?hl=en" target="_blank" rel="noreferrer" className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500">
                <Instagram size={16} />
              </a>
-             <a href="https://x.com/" className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500">
+             <a href="https://x.com/" target="_blank" rel="noreferrer" className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500">
                <Twitter size={16} />
              </a>
-             <a href="mailto:bhatironit03@gmail.com" className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500">
+             <a href="mailto:sagarrsinghh11@gmail.com" className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500">
                <Mail size={16} />
              </a>
           </div>
@@ -87,11 +92,14 @@ const Footer = () => {
       </div>
 
       {/* 3. BOTTOM WATERMARK & COPYRIGHT */}
-      <div className="relative border-t border-white/10 pt-8 px-6 md:px-10 flex flex-col md:flex-row justify-between items-center text-[9px] uppercase tracking-widest opacity-30">
-        <p>© 2026 Drag Clothing System.</p>
-        <div className="flex gap-6 mt-4 md:mt-0">
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Use</Link>
+      <div className="relative border-t border-white/10 pt-8 px-6 md:px-10 flex flex-col md:flex-row justify-between items-center text-[9px] uppercase tracking-widest opacity-50">
+        <p>© 2026 DRAG Clothing. All rights reserved.</p>
+        <div className="flex flex-wrap gap-4 sm:gap-6 mt-4 md:mt-0">
+          <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+          <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
+          <Link to="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+          <Link to="/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link>
+          <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
         </div>
       </div>
 

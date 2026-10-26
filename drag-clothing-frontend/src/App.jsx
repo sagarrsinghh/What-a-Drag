@@ -10,8 +10,12 @@ import Home from './pages/user/Home';
 import Team from './pages/user/Team';
 import Profile from './pages/user/Profile';
 import LikesPage from './pages/user/LikesPage';
-import About from './pages/user/About'
-import Contact from './pages/user/Contact'
+import About from './pages/user/About';
+import Contact from './pages/user/Contact';
+import Terms from './pages/user/Terms';
+import Privacy from './pages/user/Privacy';
+import RefundPolicy from './pages/user/RefundPolicy';
+import ShippingPolicy from './pages/user/ShippingPolicy';
 // Checkout Components
 import CheckoutAddress from './pages/user/CheckoutAddress';
 import CheckoutPayment from './pages/user/CheckoutPayment';
@@ -80,6 +84,10 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/about" element={<About />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/refund-policy" element={<RefundPolicy />} />
+      <Route path="/shipping-policy" element={<ShippingPolicy />} />
       <Route path="/likes" element={<PublicLayout><LikesPage /></PublicLayout>} />
       
       {/* CHECKOUT */}
