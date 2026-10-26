@@ -85,6 +85,42 @@ export class PaymentsService {
     return { verified: true };
   }
 
+  async confirmDirectPayment(orderId: string, method: string = 'upi', transactionRef?: string) {
+    const paymentRepo = this.dataSource.getRepository(Payment);
+    const orderRepo = this.dataSource.getRepository(Order);
+
+    const order = await orderRepo.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    const txId = transactionRef || `${method.toUpperCase()}-${Date.now()}`;
+    let payment = await paymentRepo.findOne({ where: { orderId: order.id } });
+
+    if (!payment) {
+      payment = paymentRepo.create({
+        orderId: order.id,
+        userId: order.userId,
+        amount: Number(order.totalAmount),
+        method,
+        status: 'paid',
+        transactionId: txId,
+      });
+    } else {
+      payment.amount = Number(order.totalAmount);
+      payment.method = method;
+      payment.status = 'paid';
+      payment.transactionId = txId;
+    }
+
+    await paymentRepo.save(payment);
+
+    order.status = 'confirmed';
+    await orderRepo.save(order);
+
+    return { success: true, orderId: order.id, status: 'confirmed', transactionId: txId };
+  }
+
   async handleWebhook(rawBody: string, signature: string) {
     if (!this.webhookSecret) {
       throw new BadRequestException('Webhook secret is not configured');

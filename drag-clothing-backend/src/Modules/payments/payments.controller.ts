@@ -27,6 +27,15 @@ export class PaymentsController {
     );
   }
 
+  @Post('confirm-direct')
+  confirmDirectPayment(
+    @Body('orderId') orderId: string,
+    @Body('method') method?: string,
+    @Body('transactionRef') transactionRef?: string,
+  ) {
+    return this.paymentsService.confirmDirectPayment(orderId, method, transactionRef);
+  }
+
   @Post('webhook')
   webhook(
     @Req() req: Request & { rawBody?: Buffer },

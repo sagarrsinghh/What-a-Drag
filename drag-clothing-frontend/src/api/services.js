@@ -30,6 +30,7 @@ export const orderService = {
 export const paymentService = {
   createGatewayOrder: (orderId) => api.post('/payments/create-order', { orderId }),
   verifyGatewayPayment: (data) => api.post('/payments/verify', data), // { orderId, paymentId, signature, appOrderId }
+  confirmDirectPayment: (data) => api.post('/payments/confirm-direct', data), // { orderId, method, transactionRef }
 };
 
 // ========================

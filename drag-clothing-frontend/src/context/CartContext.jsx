@@ -16,10 +16,6 @@ export const CartProvider = ({ children }) => {
       setCart([]);
       return;
     }
-    if (user.role && user.role !== 'customer') {
-      setCart([]);
-      return;
-    }
     try {
       setLoading(true);
       const res = await cartService.getCart();

@@ -248,7 +248,7 @@ const Home = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#EBE9E0]" />
             <video
-              src="/Untitled design.mp4"
+              src="/1234.mp4"
               className="w-full h-full object-cover opacity-80"
               autoPlay
               loop
@@ -309,7 +309,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="group cursor-pointer"
+                className="group cursor-pointer"  
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 <div className="relative overflow-hidden mb-6 aspect-[3/4] bg-gray-200">
