@@ -5,6 +5,8 @@ import { ApiResponseService } from 'src/common/api-response.service';
 import { QueryRunner } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
 @Injectable()
 export class AuditService {
   constructor(
@@ -118,6 +120,9 @@ export class AuditService {
     page?: number;
     limit?: number;
   }) {
+    this.assertDateWithinMonth(filters.startDate, 'startDate');
+    this.assertDateWithinMonth(filters.endDate, 'endDate');
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -187,6 +192,38 @@ export class AuditService {
       );
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  private assertDateWithinMonth(
+    value: string | undefined,
+    field: 'startDate' | 'endDate',
+  ): void {
+    if (!value) {
+      return;
+    }
+
+    const match = /^\s*([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?!\d)/.exec(value);
+    if (!match) {
+      return;
+    }
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    const daysInMonth =
+      month === 2 && isLeapYear ? 29 : DAYS_IN_MONTH[month - 1];
+
+    if (day > daysInMonth) {
+      throw new HttpException(
+        this.apiResponse.error(
+          `${field} is not a valid date`,
+          400,
+          'Bad Request',
+        ),
+        400,
+      );
     }
   }
 }
