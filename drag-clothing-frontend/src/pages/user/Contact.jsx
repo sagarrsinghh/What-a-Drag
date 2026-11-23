@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, Github, Linkedin, Instagram, ArrowUpRight } from 'lucide-react';
+import { Mail, Phone, ArrowUpRight } from 'lucide-react';
+import { Github, Linkedin, Instagram } from '../../components/BrandIcons';
 
 // --- TEAM CONTACT DATA ---
 const teamContacts = [
