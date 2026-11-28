@@ -7,11 +7,9 @@ import {
   Code2,
   ArrowUpRight,
   X,
-  Github,
-  Linkedin,
-  Instagram,
   Mail
 } from 'lucide-react';
+import { Github, Linkedin, Instagram } from '../../components/BrandIcons';
 
 // --- DATA CONFIGURATION ---
 const teamMembers = [

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Ensure react-router-dom is installed
-import { ArrowUpRight, Instagram, Twitter, Mail } from 'lucide-react';
+import { ArrowUpRight, Mail } from 'lucide-react';
+import { Instagram, Twitter } from './BrandIcons';
 
 const Footer = () => {
   return (
